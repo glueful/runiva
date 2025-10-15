@@ -36,7 +36,7 @@
       "name": "Runiva",
       "displayName": "Glueful Runiva",
       "description": "Server runtime integration for Glueful",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "icon": "assets/icon.png",
       "categories": ["runtime", "server"],
       "publisher": "glueful-team",
@@ -49,7 +49,9 @@
   },
   "suggest": {
     "spiral/roadrunner": "Required to run the RoadRunner binary and base worker",
-    "spiral/roadrunner-http": "Required to receive HTTP requests from RoadRunner in PSR-7 mode"
+    "spiral/roadrunner-http": "Required to receive HTTP requests from RoadRunner in PSR-7 mode",
+    "ext-swoole": "Required to run the Swoole HTTP server",
+    "ext-openswoole": "Required to run the OpenSwoole HTTP server"
   },
   "config": {
     "sort-packages": true
