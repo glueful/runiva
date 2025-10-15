@@ -1,0 +1,10 @@
+server:
+  command: "php vendor/glueful/runiva/bin/worker.php"
+http:
+  address: ":8080"
+  pool:
+    num_workers: 2
+logs:
+  mode: production
+  level: info
+
