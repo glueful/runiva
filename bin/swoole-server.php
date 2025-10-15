@@ -42,9 +42,18 @@ $address = (string) (config('runiva.address') ?? ':8080');
     return [$h, $p];
 })($address);
 
-$serverClass = class_exists('OpenSwoole\\HTTP\\Server')
-    ? 'OpenSwoole\\HTTP\\Server'
-    : 'Swoole\\Http\\Server';
+// Resolve server class — support OpenSwoole (HTTP/Http) and Swoole
+$openSwooleCandidates = ['OpenSwoole\\HTTP\\Server', 'OpenSwoole\\Http\\Server'];
+$serverClass = null;
+foreach ($openSwooleCandidates as $candidate) {
+    if (class_exists($candidate)) {
+        $serverClass = $candidate;
+        break;
+    }
+}
+if ($serverClass === null) {
+    $serverClass = 'Swoole\\Http\\Server';
+}
 
 /** @var object $server */
 $server = new $serverClass($host, $port);
