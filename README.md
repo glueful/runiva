@@ -21,6 +21,9 @@ Runiva integrates alternative server runtimes with the Glueful Framework — Roa
   - `spiral/roadrunner` (binary management + base worker)
   - `spiral/roadrunner-http` (PSR‑7 HTTP worker)
   - `nyholm/psr7`, `symfony/psr-http-message-bridge` (PSR‑7 <-> HttpFoundation)
+  
+  Optional (Swoole/OpenSwoole mode):
+  - `ext-swoole` or `ext-openswoole` PHP extension
 
 ## Installation
 
@@ -90,11 +93,17 @@ With `spiral/roadrunner-http`, `nyholm/psr7`, and `symfony/psr-http-message-brid
 
 ### Swoole / FrankenPHP
 
-This package ships stub scripts:
-- `vendor/glueful/runiva/bin/swoole-server.php`
-- `vendor/glueful/runiva/bin/frankenphp-server.php`
+Swoole/OpenSwoole:
+- Install the extension: `ext-swoole` or `ext-openswoole` must be enabled in PHP.
+- Start the server:
 
-You can replace these with a full server that translates runtime requests to Symfony HttpFoundation and dispatches through Glueful.
+```bash
+php glueful runiva:serve --runtime=swoole
+```
+
+FrankenPHP:
+- A stub launcher is provided at `vendor/glueful/runiva/bin/frankenphp-server.php`.
+- Prefer the official FrankenPHP CLI/Caddy integration for production.
 
 
 
@@ -107,9 +116,8 @@ You can replace these with a full server that translates runtime requests to Sym
 
 ## Versioning
 
-- Pre‑1.0: active development (0.1.x)
-- Next milestones: Swoole/FrankenPHP runnable servers, metrics/health endpoints
-- Tag releases via git (e.g., `v0.1.0`). `extra.glueful.version` in composer.json mirrors the release for UI purposes.
+- Pre‑1.0: active development (0.2.x)
+- Tag releases via git (e.g., `v0.2.0`). `extra.glueful.version` in composer.json mirrors the release for UI purposes.
 
 ---
 
