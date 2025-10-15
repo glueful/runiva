@@ -22,8 +22,8 @@ Runiva integrates alternative server runtimes with the Glueful Framework — Roa
   - `spiral/roadrunner-http` (PSR‑7 HTTP worker)
   - `nyholm/psr7`, `symfony/psr-http-message-bridge` (PSR‑7 <-> HttpFoundation)
   
-  Optional (Swoole/OpenSwoole mode):
-  - `ext-swoole` or `ext-openswoole` PHP extension
+Optional (Swoole/OpenSwoole mode):
+- PHP extensions: `ext-swoole` or `ext-openswoole` (installed via PECL/package manager)
 
 ## Installation
 
@@ -102,8 +102,83 @@ php glueful runiva:serve --runtime=swoole
 ```
 
 FrankenPHP:
-- A stub launcher is provided at `vendor/glueful/runiva/bin/frankenphp-server.php`.
-- Prefer the official FrankenPHP CLI/Caddy integration for production.
+- Ensure the `frankenphp` binary is installed and on PATH, or set `FRANKENPHP_BINARY` to its full path.
+- Start the server:
+
+```bash
+php glueful runiva:serve --runtime=frankenphp
+```
+
+Notes:
+- The launcher generates a minimal Caddyfile and runs `frankenphp run --config <tempfile>`.
+- It sets `APP_ENV` based on your environment; adjust `RUNIVA_ADDRESS` to change the listen address (default `:8080`).
+- For production, prefer a full Caddy configuration with TLS, timeouts, and headers tuned for your deployment.
+
+#### Production Caddyfile (example)
+
+```caddyfile
+{
+  # Global server options
+  servers {
+    timeouts {
+      read_header 10s
+      read_body   30s
+      write       30s
+      idle        2m
+    }
+    trusted_proxies private_ranges
+  }
+}
+
+example.com {
+  # ACME/Let’s Encrypt or email for zero‑config certificates
+  tls you@example.com
+
+  # Serve static assets efficiently
+  encode zstd gzip
+
+  # Path to your app’s public directory
+  root * /var/www/public
+
+  # Security headers (adjust CSP for your frontend needs)
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Frame-Options "SAMEORIGIN"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "no-referrer"
+    X-XSS-Protection "0"
+    Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'"
+  }
+
+  # Long‑cache immutable assets
+  @static {
+    file
+    path *.css *.js *.png *.jpg *.jpeg *.svg *.ico *.woff *.woff2 *.ttf *.map
+  }
+  handle @static {
+    header Cache-Control "public, max-age=31536000, immutable"
+    file_server
+  }
+
+  # PHP application served by FrankenPHP
+  handle {
+    php_server {
+      # Optional tuning
+      # worker 4
+      env APP_ENV=production
+      env APP_DEBUG=0
+    }
+  }
+
+  # Structured access logs
+  log {
+    output stdout
+    format json
+  }
+}
+```
+
+Adjust `example.com`, `root`, and header policies to your needs. For multi‑app setups, define multiple site blocks or use `handle_path` to mount sub‑apps.
 
 
 
