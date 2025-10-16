@@ -65,6 +65,12 @@ Start the configured runtime:
 php glueful runiva:serve
 ```
 
+Validate configuration and environment without starting:
+
+```bash
+php glueful runiva:serve --check
+```
+
 Force a specific runtime:
 
 ```bash
@@ -90,6 +96,21 @@ With `spiral/roadrunner-http`, `nyholm/psr7`, and `symfony/psr-http-message-brid
 - Convert to Symfony HttpFoundation requests
 - Dispatch through Glueful Application/Router
 - Convert Symfony responses back to PSR‑7 and respond
+
+RR worker lifecycle (simplified):
+- Bootstrap Glueful once (Framework::create()->boot()).
+- Loop: waitRequest() → convert PSR‑7 → handle → convert response → respond.
+- On SIGTERM/SIGINT/SIGQUIT: exit loop and allow RR to stop workers gracefully.
+
+watch plugin (dev hot‑reload) in rr.yaml:
+
+```yaml
+plugins:
+  watch:
+    patterns: ["**.php", "rr.yaml"]
+    ignore: ["vendor/**", "storage/**"]
+    jobs: ["http"]
+```
 
 ### Swoole / FrankenPHP
 
@@ -182,6 +203,18 @@ Adjust `example.com`, `root`, and header policies to your needs. For multi‑app
 
 
 
+## Hot‑Reload
+
+- RoadRunner: enable the `watch` plugin in `rr.yaml` or run with `rr --watch` during development to auto‑reload workers on file changes.
+- Swoole/OpenSwoole: send `SIGUSR1` to the master PID to reload workers gracefully (`kill -USR1 <master_pid>`), or use a file‑watcher script to trigger reloads.
+- FrankenPHP: restart the `frankenphp run` process (or reload Caddy) after code changes.
+
+### Graceful Shutdown
+
+- RoadRunner: Runiva’s worker handles `SIGTERM/SIGINT` and exits loops cleanly.
+- Swoole/OpenSwoole: hooks registered for `shutdown` and `workerStop` events for orderly teardown.
+- FrankenPHP: process termination is handled by the launcher/Caddy; no extra hooks required.
+
 ## Troubleshooting
 
 - Changes to `.env` and configs require a RoadRunner restart (hot workers persist state).
@@ -189,10 +222,21 @@ Adjust `example.com`, `root`, and header policies to your needs. For multi‑app
   - `spiral/roadrunner spiral/roadrunner-http nyholm/psr7 symfony/psr-http-message-bridge`
 - Ensure `rr` is installed and on PATH, or set `RUNIVA_BINARY` to an absolute path.
 
-## Versioning
+## Health & Readiness
 
-- Pre‑1.0: active development (0.2.x)
-- Tag releases via git (e.g., `v0.2.0`). `extra.glueful.version` in composer.json mirrors the release for UI purposes.
+Glueful exposes server‑agnostic health endpoints you can rely on in any runtime:
+
+- `GET /healthz` — liveness check (200 OK when the process is up)
+- `GET /ready` — readiness check (dependencies ready; secured via IP allowlist middleware by default)
+- `GET /health` — full health suite root with sub‑routes (database, cache, middleware, response‑api, queue)
+
+Examples (enable/adjust per your env/security):
+- `GET /health/database` — DB connectivity and migrations status
+- `GET /health/cache` — cache connectivity and basic operations
+- `GET /health/detailed` — extended metrics (auth required)
+- `GET /health/middleware` — middleware pipeline health (auth required)
+- `GET /health/response-api` — response API health (auth required)
+- `GET /health/queue` — queue stats and worker activity
 
 ---
 

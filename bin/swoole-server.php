@@ -93,6 +93,15 @@ $server->on('request', function ($req, $res) use ($app) {
     }
 });
 
+// Graceful shutdown hooks
+$server->on('shutdown', function () {
+    error_log('[Runiva][Swoole] Server shutting down');
+});
+
+$server->on('workerStop', function ($server, int $workerId) {
+    error_log('[Runiva][Swoole] Worker stopped: ' . $workerId);
+});
+
 echo sprintf("Runiva Swoole server listening on %s:%d\n", $host, $port);
 $server->start();
 
