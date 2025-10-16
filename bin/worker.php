@@ -8,6 +8,19 @@ require __DIR__ . '/../../../vendor/autoload.php';
 
 $worker = Worker::create();
 
+// Graceful shutdown support (SIGTERM/SIGINT)
+$running = true;
+if (function_exists('pcntl_async_signals') && function_exists('pcntl_signal')) {
+    pcntl_async_signals(true);
+    foreach ([SIGTERM, SIGINT, SIGQUIT] as $sig) {
+        pcntl_signal($sig, function () use (&$running, $sig, $worker) {
+            $running = false;
+            // Best-effort log; RoadRunner may already be stopping
+            try { $worker->error('Runiva: received signal ' . $sig . ', shutting down'); } catch (Throwable) {}
+        });
+    }
+}
+
 // Detect project root (vendor/<vendor>/<package>/bin -> project root)
 $projectRoot = dirname(__DIR__, 4);
 if (!is_file($projectRoot . '/composer.json')) {
@@ -38,7 +51,7 @@ if ($hasPsr7) {
     $httpFoundationFactory = new Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory();
     $psr7Worker = new Spiral\RoadRunner\Http\PSR7Worker($worker, $psr17, $psr17, $psr17);
 
-    while (true) {
+    while ($running) {
         try {
             $psrRequest = $psr7Worker->waitRequest();
             if ($psrRequest === null) {
@@ -62,7 +75,7 @@ $worker->error(
     . 'and RoadRunner HTTP package. Falling back to payload loop.'
 );
 
-while ($payload = $worker->waitPayload()) {
+while ($running && ($payload = $worker->waitPayload())) {
     try {
         $worker->respond(new Spiral\RoadRunner\Payload('OK'));
     } catch (Throwable $e) {
@@ -70,3 +83,4 @@ while ($payload = $worker->waitPayload()) {
     }
 }
 
+try { $worker->error('Runiva: worker stopped gracefully'); } catch (Throwable) {}
