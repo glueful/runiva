@@ -36,13 +36,13 @@
       "name": "Runiva",
       "displayName": "Glueful Runiva",
       "description": "Server runtime integration for Glueful",
-      "version": "0.5.0",
+      "version": "0.5.1",
       "icon": "assets/icon.png",
       "categories": ["runtime", "server"],
       "publisher": "glueful-team",
       "provider": "Glueful\\Extensions\\Runiva\\RunivaServiceProvider",
       "requires": {
-        "glueful": ">=1.6.2",
+        "glueful": ">=1.7.1",
         "extensions": []
       }
     }
