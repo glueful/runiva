@@ -19,5 +19,17 @@ final class RunivaServiceProvider extends ServiceProvider
         $this->commands([
             Console\RunivaServeCommand::class,
         ]);
+
+        // Register extension metadata for CLI and diagnostics
+        try {
+            $this->app->get(\Glueful\Extensions\ExtensionManager::class)->registerMeta(self::class, [
+                'slug' => 'runiva',
+                'name' => 'Runiva',
+                'version' => '0.5.1',
+                'description' => 'Server runtime integration for Glueful',
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[Runiva] Failed to register extension metadata: ' . $e->getMessage());
+        }
     }
 }
