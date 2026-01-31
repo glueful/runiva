@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Glueful\Framework;
+
 // Minimal FrankenPHP launcher for Glueful apps.
 // Requires the `frankenphp` binary to be installed and available in PATH
 // or provided via the FRANKENPHP_BINARY environment variable.
@@ -15,6 +17,19 @@ if (!is_file($projectRoot . '/composer.json')) {
     $projectRoot = getcwd() ?: $projectRoot;
 }
 
+
+// Boot Glueful to access ApplicationContext
+try {
+    if (!class_exists(Framework::class)) {
+        throw new RuntimeException('Glueful Framework not found. Ensure glueful/framework is installed.');
+    }
+    $app = Framework::create($projectRoot)->boot();
+    $context = $app->getContext();
+} catch (Throwable $e) {
+    fwrite(STDERR, 'Failed to boot Glueful: ' . $e->getMessage() . "\n");
+    exit(1);
+}
+
 // Resolve public directory
 $publicDir = $projectRoot . '/public';
 if (!is_dir($publicDir)) {
@@ -23,9 +38,9 @@ if (!is_dir($publicDir)) {
 }
 
 // Resolve listen address from config/env (e.g., ":8080" or "127.0.0.1:8080")
-$address = (string) (function (): string {
+$address = (string) (function () use ($context): string {
     if (function_exists('config')) {
-        $addr = config('runiva.address');
+        $addr = config($context, 'runiva.address');
         if (is_string($addr) && $addr !== '') {
             return $addr;
         }

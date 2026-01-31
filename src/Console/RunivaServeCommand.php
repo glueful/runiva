@@ -19,8 +19,8 @@ final class RunivaServeCommand extends BaseCommand
         $this
             ->setDescription('Start the configured Runiva runtime (default: RoadRunner)')
             ->addArgument('config', InputArgument::OPTIONAL, 'Path to runtime config (e.g., rr.yaml)')
-            ->addOption('runtime', null, InputOption::VALUE_OPTIONAL, 'Runtime engine (roadrunner|swoole|frankenphp)', (string) (config('runiva.runtime') ?? 'roadrunner'))
-            ->addOption('binary', null, InputOption::VALUE_OPTIONAL, 'Runtime binary', (string) (config('runiva.binary') ?? 'rr'))
+            ->addOption('runtime', null, InputOption::VALUE_OPTIONAL, 'Runtime engine (roadrunner|swoole|frankenphp)', (string) (config($this->getContext(), 'runiva.runtime') ?? 'roadrunner'))
+            ->addOption('binary', null, InputOption::VALUE_OPTIONAL, 'Runtime binary', (string) (config($this->getContext(), 'runiva.binary') ?? 'rr'))
             ->addOption('check', null, InputOption::VALUE_NONE, 'Validate configuration and environment, then exit');
     }
 
@@ -28,7 +28,7 @@ final class RunivaServeCommand extends BaseCommand
     {
         $runtime = (string) $input->getOption('runtime');
         $binary = (string) $input->getOption('binary');
-        $configArg = (string) ($input->getArgument('config') ?: (config('runiva.config') ?? ''));
+        $configArg = (string) ($input->getArgument('config') ?: (config($this->getContext(), 'runiva.config') ?? ''));
 
         // Optional config validation mode
         if ((bool) $input->getOption('check')) {
@@ -69,7 +69,7 @@ final class RunivaServeCommand extends BaseCommand
 
     private function phpScriptCommand(string $script): string
     {
-        return 'php ' . escapeshellarg(base_path($script));
+        return 'php ' . escapeshellarg(base_path($this->getContext(), $script));
     }
 
     private function runChecks(string $runtime, string $binary, string $cfg): bool

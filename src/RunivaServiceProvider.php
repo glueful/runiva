@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Glueful\Extensions\Runiva;
 
+use Glueful\Bootstrap\ApplicationContext;
 use Glueful\Extensions\ServiceProvider;
 
 final class RunivaServiceProvider extends ServiceProvider
 {
-    public function register(): void
+    public function register(ApplicationContext $context): void
     {
         // Merge default config from package; app overrides win
         $this->mergeConfig('runiva', require __DIR__ . '/../config/runiva.php');
     }
 
-    public function boot(): void
+    public function boot(ApplicationContext $context): void
     {
         $this->commands([
             Console\RunivaServeCommand::class,
@@ -25,7 +26,7 @@ final class RunivaServiceProvider extends ServiceProvider
             $this->app->get(\Glueful\Extensions\ExtensionManager::class)->registerMeta(self::class, [
                 'slug' => 'runiva',
                 'name' => 'Runiva',
-                'version' => '0.5.1',
+                'version' => '0.7.0',
                 'description' => 'Server runtime integration for Glueful',
             ]);
         } catch (\Throwable $e) {

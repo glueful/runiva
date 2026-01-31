@@ -15,8 +15,8 @@ Runiva integrates alternative server runtimes with the Glueful Framework — Roa
 
 ## Requirements
 
-- PHP 8.2+
-- Glueful Framework ^1.6.2
+- PHP 8.3+
+- Glueful Framework 1.22.0+
 - Optional (RoadRunner mode):
   - `spiral/roadrunner` (binary management + base worker)
   - `spiral/roadrunner-http` (PSR‑7 HTTP worker)
