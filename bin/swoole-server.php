@@ -25,13 +25,14 @@ try {
         throw new RuntimeException('Glueful Framework not found. Ensure glueful/framework is installed.');
     }
     $app = Framework::create($projectRoot)->boot();
+    $context = $app->getContext();
 } catch (Throwable $e) {
     fwrite(STDERR, 'Failed to boot Glueful: ' . $e->getMessage() . "\n");
     exit(1);
 }
 
 // Determine host/port from config `runiva.address` (e.g., ":8080" or "127.0.0.1:8080")
-$address = (string) (config('runiva.address') ?? ':8080');
+$address = (string) (config($context, 'runiva.address') ?? ':8080');
 [$host, $port] = (function (string $addr): array {
     $h = '0.0.0.0';
     $p = 8080;
@@ -59,7 +60,7 @@ if ($serverClass === null) {
 $server = new $serverClass($host, $port);
 
 $server->set([
-    'worker_num' => (int) (config('runiva.workers') ?? 2),
+    'worker_num' => (int) (config($context, 'runiva.workers') ?? 2),
 ]);
 
 $server->on('request', function ($req, $res) use ($app) {
