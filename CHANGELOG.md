@@ -12,6 +12,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FrankenPHP worker mode enhancements
 - Health check integration with runtime-specific metrics
 
+## [0.8.0] - 2026-02-05
+
+### Changed
+- **Framework Compatibility**: Updated minimum framework requirement to Glueful 1.28.0
+  - Compatible with route caching infrastructure (Bellatrix release)
+  - Benefits from improved route cache signature-based invalidation
+- **composer.json**: Updated `extra.glueful.requires.glueful` to `>=1.28.0`
+
+### Framework Features Now Available
+- **Route Caching**: Long-running servers benefit from pre-compiled route caches
+- **Closure Detection**: Framework warns about non-cacheable routes
+- **ResourceController Refactoring**: Framework controllers use RESTful naming conventions
+
+### Notes
+- This release ensures compatibility with Glueful Framework 1.28.0's route caching improvements
+- No code changes required - runtime adapters work seamlessly with cached routes
+- Run `composer update` after upgrading
+
 ## [0.7.0] - 2026-01-31
 
 ### Changed

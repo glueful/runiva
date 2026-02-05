@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace Glueful\Extensions\Runiva\Console;
 
 use Glueful\Console\BaseCommand;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'runiva:serve',
+    description: 'Start the configured Runiva runtime (default: RoadRunner)'
+)]
 final class RunivaServeCommand extends BaseCommand
 {
-    protected static $defaultName = 'runiva:serve';
-
     protected function configure(): void
     {
         $this
-            ->setDescription('Start the configured Runiva runtime (default: RoadRunner)')
             ->addArgument('config', InputArgument::OPTIONAL, 'Path to runtime config (e.g., rr.yaml)')
             ->addOption('runtime', null, InputOption::VALUE_OPTIONAL, 'Runtime engine (roadrunner|swoole|frankenphp)', (string) (config($this->getContext(), 'runiva.runtime') ?? 'roadrunner'))
             ->addOption('binary', null, InputOption::VALUE_OPTIONAL, 'Runtime binary', (string) (config($this->getContext(), 'runiva.binary') ?? 'rr'))

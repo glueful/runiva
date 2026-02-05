@@ -17,16 +17,19 @@ final class RunivaServiceProvider extends ServiceProvider
 
     public function boot(ApplicationContext $context): void
     {
-        $this->commands([
-            Console\RunivaServeCommand::class,
-        ]);
+        // Auto-discover CLI commands from Console/ directory
+        // Commands must have #[AsCommand] attribute to be discovered
+        $this->discoverCommands(
+            'Glueful\\Extensions\\Runiva\\Console',
+            __DIR__ . '/Console'
+        );
 
         // Register extension metadata for CLI and diagnostics
         try {
             $this->app->get(\Glueful\Extensions\ExtensionManager::class)->registerMeta(self::class, [
                 'slug' => 'runiva',
                 'name' => 'Runiva',
-                'version' => '0.7.0',
+                'version' => '0.8.0',
                 'description' => 'Server runtime integration for Glueful',
             ]);
         } catch (\Throwable $e) {
