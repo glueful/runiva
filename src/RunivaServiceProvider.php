@@ -9,6 +9,22 @@ use Glueful\Extensions\ServiceProvider;
 
 final class RunivaServiceProvider extends ServiceProvider
 {
+    private static ?string $cachedVersion = null;
+
+    /**
+     * Read the extension version from composer.json (cached)
+     */
+    public static function composerVersion(): string
+    {
+        if (self::$cachedVersion === null) {
+            $path = __DIR__ . '/../composer.json';
+            $composer = json_decode(file_get_contents($path), true);
+            self::$cachedVersion = $composer['version'] ?? '0.0.0';
+        }
+
+        return self::$cachedVersion;
+    }
+
     public function register(ApplicationContext $context): void
     {
         // Merge default config from package; app overrides win
@@ -29,7 +45,7 @@ final class RunivaServiceProvider extends ServiceProvider
             $this->app->get(\Glueful\Extensions\ExtensionManager::class)->registerMeta(self::class, [
                 'slug' => 'runiva',
                 'name' => 'Runiva',
-                'version' => '0.8.0',
+                'version' => self::composerVersion(),
                 'description' => 'Server runtime integration for Glueful',
             ]);
         } catch (\Throwable $e) {

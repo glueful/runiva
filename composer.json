@@ -39,7 +39,7 @@
             "name": "Runiva",
             "displayName": "Glueful Runiva",
             "description": "Server runtime integration for Glueful",
-            "version": "0.8.0",
+            "version": "0.8.1",
             "icon": "assets/icon.png",
             "categories": [
                 "runtime",
