@@ -29,7 +29,13 @@ Optional (Swoole/OpenSwoole mode):
 
 ```bash
 composer require glueful/runiva
+
+# Enable it — installing does not auto-load an extension; this adds the provider to
+# config/extensions.php's `enabled` list and recompiles the cache.
+php glueful extensions:enable runiva
 ```
+
+In production, manage the `enabled` list in config and run `php glueful extensions:cache` in your deploy step.
 
 RoadRunner (recommended for HTTP)
 
@@ -41,8 +47,8 @@ composer require spiral/roadrunner spiral/roadrunner-http nyholm/psr7 symfony/ps
 
 ```bash
 php glueful extensions:list
-php glueful extensions:info Runiva
-php glueful extensions:why Glueful\\Extensions\\Runiva\\RunivaServiceProvider
+php glueful extensions:info runiva
+php glueful extensions:diagnose
 ```
 
 ## Getting Started
