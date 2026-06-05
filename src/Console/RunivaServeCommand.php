@@ -49,8 +49,9 @@ final class RunivaServeCommand extends BaseCommand
         }
 
         $this->info('Starting ' . $runtime . ': ' . $cmd);
+        $exit = self::FAILURE;
         passthru($cmd, $exit);
-        return is_int($exit) ? $exit : self::FAILURE;
+        return $exit;
     }
 
     private function buildCommand(string $runtime, string $binary, string $cfg): ?string
