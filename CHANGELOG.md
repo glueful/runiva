@@ -12,6 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FrankenPHP worker mode enhancements
 - Health check integration with runtime-specific metrics
 
+## [0.9.0] - 2026-06-05 — Framework 1.50 Compatibility
+
+### Changed
+- **Minimum framework requirement raised to `glueful/framework >=1.50.1`** (`require-dev` pinned to `^1.50.1`); previously `>=1.28.0`.
+
+### Build
+- **Dev tooling added** for consistency with the other extensions: `phpunit/phpunit ^10.5`, `phpstan/phpstan ^1.0`, `squizlabs/php_codesniffer ^3.6` in `require-dev`, plus `phpcs` / `phpcbf` / `analyze` composer scripts and a `phpunit.xml` (so `composer test`/`analyze` run instead of erroring on missing tools). `composer analyze` is clean.
+
+### Fixed
+- Removed an unreachable `else` branch in `RunivaServeCommand::execute()` (`passthru()`'s by-ref exit code is always an int) — the static-analysis finding the new `analyze` script surfaced.
+
+### Notes
+- Compatibility/maintenance release — **no functional change** to the runtimes. The RoadRunner/Swoole/FrankenPHP workers bootstrap via `Glueful\Framework::create()->boot()` and run the request loop with `Application::handle()` / `terminate()`, all confirmed present in framework 1.50.1.
+
 ## [0.8.1] - 2026-02-06
 
 ### Changed
