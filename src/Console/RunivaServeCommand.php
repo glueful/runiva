@@ -21,8 +21,20 @@ final class RunivaServeCommand extends BaseCommand
     {
         $this
             ->addArgument('config', InputArgument::OPTIONAL, 'Path to runtime config (e.g., rr.yaml)')
-            ->addOption('runtime', null, InputOption::VALUE_OPTIONAL, 'Runtime engine (roadrunner|swoole|frankenphp)', (string) (config($this->getContext(), 'runiva.runtime') ?? 'roadrunner'))
-            ->addOption('binary', null, InputOption::VALUE_OPTIONAL, 'Runtime binary', (string) (config($this->getContext(), 'runiva.binary') ?? 'rr'))
+            ->addOption(
+                'runtime',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Runtime engine (roadrunner|swoole|frankenphp)',
+                (string) (config($this->getContext(), 'runiva.runtime') ?? 'roadrunner')
+            )
+            ->addOption(
+                'binary',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Runtime binary',
+                (string) (config($this->getContext(), 'runiva.binary') ?? 'rr')
+            )
             ->addOption('check', null, InputOption::VALUE_NONE, 'Validate configuration and environment, then exit');
     }
 

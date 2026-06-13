@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-06-13
+
+### Fixed
+- **Security: Swoole coroutine request concurrency is disabled by default.**
+  The packaged Swoole server now sets `enable_coroutine => false`, keeping
+  request handling sequential within each worker so framework and extension
+  request-scoped state is not shared across overlapping coroutines.
+- **Security: long-running HTTP workers now terminate request lifecycle state in
+  `finally`.** RoadRunner and Swoole workers now call
+  `Application::terminate()` for any request that reached the Glueful app even
+  if response conversion/emission or app handling throws, preventing partial
+  request state from leaking into the next request on the same worker.
+- **Security: Swoole now binds to loopback by default.** The packaged
+  `runiva.address` default changed from `:8080` to `127.0.0.1:8080`, and an
+  empty host now resolves to `127.0.0.1` instead of `0.0.0.0`. Public binds
+  remain available by explicitly setting `RUNIVA_ADDRESS=0.0.0.0:PORT`.
+
 ### Planned
 - OpenSwoole coroutine support improvements
 - FrankenPHP worker mode enhancements
