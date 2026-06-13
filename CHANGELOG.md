@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned
+- OpenSwoole coroutine support improvements
+- FrankenPHP worker mode enhancements
+- Health check integration with runtime-specific metrics
+
 ## [0.9.1] - 2026-06-13
 
 ### Fixed
@@ -23,11 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `runiva.address` default changed from `:8080` to `127.0.0.1:8080`, and an
   empty host now resolves to `127.0.0.1` instead of `0.0.0.0`. Public binds
   remain available by explicitly setting `RUNIVA_ADDRESS=0.0.0.0:PORT`.
-
-### Planned
-- OpenSwoole coroutine support improvements
-- FrankenPHP worker mode enhancements
-- Health check integration with runtime-specific metrics
 
 ## [0.9.0] - 2026-06-05 — Framework 1.50 Compatibility
 
