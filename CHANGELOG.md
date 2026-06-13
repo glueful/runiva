@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **Security: Swoole coroutine request concurrency is disabled by default.**
+  The packaged Swoole server now sets `enable_coroutine => false`, keeping
+  request handling sequential within each worker so framework and extension
+  request-scoped state is not shared across overlapping coroutines.
 - **Security: long-running HTTP workers now terminate request lifecycle state in
   `finally`.** RoadRunner and Swoole workers now call
   `Application::terminate()` for any request that reached the Glueful app even

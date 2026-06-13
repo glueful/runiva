@@ -56,6 +56,7 @@ $server = new $serverClass($host, $port);
 
 $server->set([
     'worker_num' => (int) (config($context, 'runiva.workers') ?? 2),
+    'enable_coroutine' => false,
 ]);
 
 $server->on('request', function ($req, $res) use ($app) {
