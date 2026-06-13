@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Glueful\Framework;
+use Glueful\Extensions\Runiva\Support\RuntimeAddress;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request as SfRequest;
 
@@ -31,17 +32,10 @@ try {
     exit(1);
 }
 
-// Determine host/port from config `runiva.address` (e.g., ":8080" or "127.0.0.1:8080")
-$address = (string) (config($context, 'runiva.address') ?? ':8080');
-[$host, $port] = (function (string $addr): array {
-    $h = '0.0.0.0';
-    $p = 8080;
-    if (preg_match('/^(?<host>[^:]*):(?<port>\d+)$/', $addr, $m)) {
-        $h = $m['host'] !== '' ? $m['host'] : '0.0.0.0';
-        $p = (int) $m['port'];
-    }
-    return [$h, $p];
-})($address);
+// Determine host/port from config `runiva.address` (e.g., "127.0.0.1:8080" or "0.0.0.0:8080")
+$runtimeAddress = RuntimeAddress::parse((string) (config($context, 'runiva.address') ?? '127.0.0.1:8080'));
+$host = $runtimeAddress->host;
+$port = $runtimeAddress->port;
 
 // Resolve server class — support OpenSwoole (HTTP/Http) and Swoole
 $openSwooleCandidates = ['OpenSwoole\\HTTP\\Server', 'OpenSwoole\\Http\\Server'];

@@ -5,6 +5,5 @@ return [
     'binary' => env('RUNIVA_BINARY', 'rr'),
     'config' => env('RUNIVA_CONFIG', __DIR__ . '/../rr.yaml'),
     'workers' => env('RUNIVA_WORKERS', 2),
-    'address' => env('RUNIVA_ADDRESS', ':8080'),
+    'address' => env('RUNIVA_ADDRESS', '127.0.0.1:8080'),
 ];
-
