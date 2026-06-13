@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-06-13
+
 ### Fixed
 - **Security: Swoole coroutine request concurrency is disabled by default.**
   The packaged Swoole server now sets `enable_coroutine => false`, keeping
