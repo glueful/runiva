@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **Security: long-running HTTP workers now terminate request lifecycle state in
+  `finally`.** RoadRunner and Swoole workers now call
+  `Application::terminate()` for any request that reached the Glueful app even
+  if response conversion/emission or app handling throws, preventing partial
+  request state from leaking into the next request on the same worker.
 - **Security: Swoole now binds to loopback by default.** The packaged
   `runiva.address` default changed from `:8080` to `127.0.0.1:8080`, and an
   empty host now resolves to `127.0.0.1` instead of `0.0.0.0`. Public binds

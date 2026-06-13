@@ -6,6 +6,7 @@ use Glueful\Framework;
 use Glueful\Extensions\Runiva\Support\RuntimeAddress;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request as SfRequest;
+use Symfony\Component\HttpFoundation\Response as SfResponse;
 
 if (!extension_loaded('swoole') && !extension_loaded('openswoole')) {
     fwrite(STDERR, "Swoole/OpenSwoole extension not installed.\n");
@@ -58,6 +59,9 @@ $server->set([
 ]);
 
 $server->on('request', function ($req, $res) use ($app) {
+    $sfReq = null;
+    $sfRes = null;
+
     try {
         $sfReq = swooleToSymfonyRequest($req);
         $sfRes = $app->handle($sfReq);
@@ -79,12 +83,17 @@ $server->on('request', function ($req, $res) use ($app) {
         // Body
         $content = $sfRes->getContent();
         $res->end($content === false ? '' : $content);
-
-        $app->terminate($sfReq, $sfRes);
     } catch (Throwable $e) {
+        if ($sfReq !== null && $sfRes === null) {
+            $sfRes = new SfResponse('Internal Server Error', 500);
+        }
         $res->status(500);
         $res->end('Internal Server Error');
         error_log('[Runiva][Swoole] ' . $e->getMessage());
+    } finally {
+        if ($sfReq !== null && $sfRes !== null) {
+            $app->terminate($sfReq, $sfRes);
+        }
     }
 });
 

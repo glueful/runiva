@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Spiral\RoadRunner\Worker;
+use Symfony\Component\HttpFoundation\Response as SfResponse;
 
 require __DIR__ . '/../../../vendor/autoload.php';
 
@@ -52,6 +53,9 @@ if ($hasPsr7) {
     $psr7Worker = new Spiral\RoadRunner\Http\PSR7Worker($worker, $psr17, $psr17, $psr17);
 
     while ($running) {
+        $sfRequest = null;
+        $sfResponse = null;
+
         try {
             $psrRequest = $psr7Worker->waitRequest();
             if ($psrRequest === null) {
@@ -61,10 +65,16 @@ if ($hasPsr7) {
             $sfResponse = $app->handle($sfRequest);
             $psrResponse = $psrHttpFactory->createResponse($sfResponse);
             $psr7Worker->respond($psrResponse);
-            $app->terminate($sfRequest, $sfResponse);
         } catch (Throwable $e) {
+            if ($sfRequest !== null && $sfResponse === null) {
+                $sfResponse = new SfResponse('Internal Server Error', 500);
+            }
             $psr7Worker->respond(new Nyholm\Psr7\Response(500, ['Content-Type' => 'text/plain'], 'Internal Server Error'));
             $worker->error($e->getMessage());
+        } finally {
+            if ($sfRequest !== null && $sfResponse !== null) {
+                $app->terminate($sfRequest, $sfResponse);
+            }
         }
     }
 }
