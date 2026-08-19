@@ -7,14 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Declares the schema-free Glueful manifest (migrations: none, requires.extensions); requires
-  framework >=1.79.0 for schema-on-enable participation.
-
 ### Planned
 - OpenSwoole coroutine support improvements
 - FrankenPHP worker mode enhancements
 - Health check integration with runtime-specific metrics
+
+## [0.10.0] - 2026-08-19
+
+### Added
+- Declares the schema-free Glueful manifest (migrations: none, requires.extensions); requires
+  framework >=1.79.0 for schema-on-enable participation.
 
 ## [0.9.1] - 2026-06-13
 
